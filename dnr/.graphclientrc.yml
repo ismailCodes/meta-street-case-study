@@ -1,4 +1,3 @@
-# .graphclientrc.yml
 sources:
   - name: metastreet-cs
     handler:
@@ -6,3 +5,9 @@ sources:
         endpoint: https://api.studio.thegraph.com/query/31830/metastreet-v2-sepolia/version/latest
 documents:
   - ./graphql/get-ticks-by-pool.graphql
+generates:
+  .graphclient/sources/metastreet-cs/types.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-urql"
