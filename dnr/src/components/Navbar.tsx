@@ -3,6 +3,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MetastreetLogo } from "./MetastreetLogo";
 
+function ConnectButton() {
+  return <w3m-button />;
+}
+
 export const Navbar = () => {
   const pathname = usePathname();
 
@@ -38,7 +42,7 @@ export const Navbar = () => {
       </div>
 
       <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-        connect wallet
+        <ConnectButton />
       </div>
     </nav>
   );

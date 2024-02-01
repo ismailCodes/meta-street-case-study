@@ -27,7 +27,7 @@ export const TickCard = ({
           </>
 
           {/* tag */}
-          <div className="flex justify-center items-center gap-1 bg-indigo-600/50 w-16 h-7 rounded-full">
+          <div className="flex justify-center items-center gap-1 bg-indigo-600/60 w-16 h-7 rounded-full">
             <p className="text-gray-100 font-semibold text-sm">
               {secondsToDays(duration)}
             </p>
