@@ -1,7 +1,7 @@
 "use client";
-import { MetastreetLogo } from "./MetastreetLogo";
-import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { MetastreetLogo } from "./MetastreetLogo";
 
 export const Navbar = () => {
   const pathname = usePathname();
