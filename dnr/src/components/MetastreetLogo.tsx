@@ -98,7 +98,7 @@ export const MetastreetLogo = () => (
           y2="226.158"
         >
           <stop stop-color="#0F004A"></stop>
-          <stop offset="1" stop-opacity="0"></stop>
+          <stop offset="1" stopOpacity="0"></stop>
         </linearGradient>
         <linearGradient
           gradientUnits="userSpaceOnUse"
@@ -108,8 +108,8 @@ export const MetastreetLogo = () => (
           y1="161.476"
           y2="-12.1566"
         >
-          <stop stop-color="#E90000" stop-opacity="0.51"></stop>
-          <stop offset="1" stop-opacity="0"></stop>
+          <stop stop-color="#E90000" stopOpacity="0.51"></stop>
+          <stop offset="1" stopOpacity="0"></stop>
         </linearGradient>
         <linearGradient
           gradientUnits="userSpaceOnUse"
@@ -130,8 +130,8 @@ export const MetastreetLogo = () => (
           y1="25.2306"
           y2="189"
         >
-          <stop stop-opacity="0"></stop>
-          <stop offset="1" stop-color="#FF5656" stop-opacity="0.39"></stop>
+          <stop stopOpacity="0"></stop>
+          <stop offset="1" stop-color="#FF5656" stopOpacity="0.39"></stop>
         </linearGradient>
         <linearGradient
           gradientUnits="userSpaceOnUse"
@@ -141,8 +141,8 @@ export const MetastreetLogo = () => (
           y1="170.421"
           y2="6.88108"
         >
-          <stop stop-opacity="0"></stop>
-          <stop offset="1" stop-color="#6E56FF" stop-opacity="0.39"></stop>
+          <stop stopOpacity="0"></stop>
+          <stop offset="1" stop-color="#6E56FF" stopOpacity="0.39"></stop>
         </linearGradient>
         <clipPath id="clip0_20669_490">
           <rect fill="white" height="189" rx="38.0752" width="189"></rect>
