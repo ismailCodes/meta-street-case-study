@@ -8,18 +8,18 @@ export const MetastreetLogo = () => (
       xmlns="http://www.w3.org/2000/svg"
       className="mr-1 h-10 w-10"
     >
-      <g clip-path="url(#clip0_20669_490)">
+      <g clipPath="url(#clip0_20669_490)">
         <rect fill="#171717" height="189" rx="38.9927" width="189"></rect>
         <rect
           fill="url(#paint0_linear_20669_490)"
-          fill-opacity="0.2"
+          fillOpacity="0.2"
           height="189"
           rx="38.9927"
           width="189"
         ></rect>
         <rect
           fill="url(#paint1_linear_20669_490)"
-          fill-opacity="0.2"
+          fillOpacity="0.2"
           height="189"
           rx="38.9927"
           width="189"
@@ -34,17 +34,17 @@ export const MetastreetLogo = () => (
           ></ellipse>
         </g>
         <path
-          clip-rule="evenodd"
+          clipRule="evenodd"
           d="M96.6633 39.7987C94.9888 38.8493 92.9387 38.8493 91.2642 39.7987L45.0605 65.9928C42.6148 67.3794 43.5988 71.1106 46.4103 71.1106H141.517C144.329 71.1106 145.313 67.3794 142.867 65.9928L96.6633 39.7987ZM78.9092 115.671C75.0828 118.59 70.2024 120.34 64.8864 120.34C52.602 120.34 42.6436 110.996 42.6436 99.4696C42.6436 87.9432 52.602 78.5993 64.8864 78.5993H124.2C136.485 78.5993 146.443 87.9432 146.443 99.4696C146.443 110.996 136.485 120.34 124.2 120.34C118.884 120.34 114.004 118.59 110.177 115.671C108.434 114.341 106.38 113.383 104.187 113.383H84.8991C82.7062 113.383 80.6526 114.341 78.9092 115.671ZM120.938 99.41C120.938 101.562 119.079 103.306 116.786 103.306C114.493 103.306 112.634 101.562 112.634 99.41C112.634 97.2584 114.493 95.5144 116.786 95.5144C119.079 95.5144 120.938 97.2584 120.938 99.41ZM133.394 103.306C135.687 103.306 137.546 101.562 137.546 99.41C137.546 97.2584 135.687 95.5144 133.394 95.5144C131.101 95.5144 129.242 97.2584 129.242 99.41C129.242 101.562 131.101 103.306 133.394 103.306ZM125.09 95.5144C122.797 95.5144 120.938 93.77 120.938 91.6184C120.938 89.4668 122.797 87.7228 125.09 87.7228C127.383 87.7228 129.242 89.4668 129.242 91.6184C129.242 93.77 127.383 95.5144 125.09 95.5144ZM120.938 107.202C120.938 109.353 122.797 111.097 125.09 111.097C127.383 111.097 129.242 109.353 129.242 107.202C129.242 105.05 127.383 103.306 125.09 103.306C122.797 103.306 120.938 105.05 120.938 107.202ZM47.2035 127.729H141.615C143.393 127.729 144.834 129.085 144.834 130.757C144.834 132.43 143.393 133.786 141.615 133.786H47.2035C45.4259 133.786 43.9849 132.43 43.9849 130.757C43.9849 129.085 45.4259 127.729 47.2035 127.729ZM147.784 137.823H41.0345C39.2569 137.823 37.8159 139.179 37.8159 140.851C37.8159 142.524 39.2569 143.88 41.0345 143.88H147.784C149.562 143.88 151.003 142.524 151.003 140.851C151.003 139.179 149.562 137.823 147.784 137.823ZM67.5111 107.4C67.5111 108.105 66.9398 108.676 66.235 108.676H61.9814C61.2766 108.676 60.7053 108.105 60.7053 107.4V102.722H56.0257C55.3209 102.722 54.7496 102.15 54.7496 101.446V97.1921C54.7496 96.4873 55.3209 95.916 56.0257 95.916H60.7053V91.2363C60.7053 90.5315 61.2766 89.9602 61.9814 89.9602H66.235C66.9398 89.9602 67.5111 90.5315 67.5111 91.2363V95.916H72.1894C72.8942 95.916 73.4655 96.4873 73.4655 97.1921V101.446C73.4655 102.15 72.8942 102.722 72.1894 102.722H67.5111L67.5111 107.4Z"
           fill="white"
-          fill-rule="evenodd"
+          fillRule="evenodd"
         ></path>
       </g>
       <rect
         height="187.624"
         rx="37.3871"
         stroke="url(#paint2_linear_20669_490)"
-        stroke-width="1.37621"
+        strokeWidth="1.37621"
         width="187.624"
         x="0.688107"
         y="0.688107"
@@ -53,7 +53,7 @@ export const MetastreetLogo = () => (
         height="187.624"
         rx="37.3871"
         stroke="url(#paint3_linear_20669_490)"
-        stroke-width="1.37621"
+        strokeWidth="1.37621"
         width="187.624"
         x="0.688107"
         y="0.688107"
@@ -62,14 +62,14 @@ export const MetastreetLogo = () => (
         height="187.624"
         rx="37.3871"
         stroke="url(#paint4_linear_20669_490)"
-        stroke-width="1.37621"
+        strokeWidth="1.37621"
         width="187.624"
         x="0.688107"
         y="0.688107"
       ></rect>
       <defs>
         <filter
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
           filterUnits="userSpaceOnUse"
           height="131.569"
           id="filter0_f_20669_490"
@@ -77,7 +77,7 @@ export const MetastreetLogo = () => (
           x="-2.24759"
           y="123.447"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
+          <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
           <feBlend
             in="SourceGraphic"
             in2="BackgroundImageFix"
@@ -97,7 +97,7 @@ export const MetastreetLogo = () => (
           y1="1.83495"
           y2="226.158"
         >
-          <stop stop-color="#0F004A"></stop>
+          <stop stopColor="#0F004A"></stop>
           <stop offset="1" stopOpacity="0"></stop>
         </linearGradient>
         <linearGradient
@@ -108,7 +108,7 @@ export const MetastreetLogo = () => (
           y1="161.476"
           y2="-12.1566"
         >
-          <stop stop-color="#E90000" stopOpacity="0.51"></stop>
+          <stop stopColor="#E90000" stopOpacity="0.51"></stop>
           <stop offset="1" stopOpacity="0"></stop>
         </linearGradient>
         <linearGradient
@@ -120,7 +120,7 @@ export const MetastreetLogo = () => (
           y2="-77.9854"
         >
           <stop></stop>
-          <stop offset="1" stop-color="#676767"></stop>
+          <stop offset="1" stopColor="#676767"></stop>
         </linearGradient>
         <linearGradient
           gradientUnits="userSpaceOnUse"
@@ -131,7 +131,7 @@ export const MetastreetLogo = () => (
           y2="189"
         >
           <stop stopOpacity="0"></stop>
-          <stop offset="1" stop-color="#FF5656" stopOpacity="0.39"></stop>
+          <stop offset="1" stopColor="#FF5656" stopOpacity="0.39"></stop>
         </linearGradient>
         <linearGradient
           gradientUnits="userSpaceOnUse"
@@ -142,7 +142,7 @@ export const MetastreetLogo = () => (
           y2="6.88108"
         >
           <stop stopOpacity="0"></stop>
-          <stop offset="1" stop-color="#6E56FF" stopOpacity="0.39"></stop>
+          <stop offset="1" stopColor="#6E56FF" stopOpacity="0.39"></stop>
         </linearGradient>
         <clipPath id="clip0_20669_490">
           <rect fill="white" height="189" rx="38.0752" width="189"></rect>

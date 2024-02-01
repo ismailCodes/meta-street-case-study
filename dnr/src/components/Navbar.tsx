@@ -21,14 +21,14 @@ export const Navbar = () => {
         <div className="flex items-center justify-center gap-4 lg:flex-row lg:gap-8">
           <Link
             className={`flex items-center justify-center gap-2 px-8 text-sm font-bold 
-            ${pathname === "/" ? "text-white" : "text-gray-300"}`}
+            ${pathname === "/pools" ? "text-indigo-500" : ""}`}
             href="/pools"
           >
             <span>Pools</span>
           </Link>
           <Link
             className={`flex items-center justify-center gap-2 px-8 text-sm font-bold
-            ${pathname === "/stats" ? "text-white" : "text-gray-300"}
+            ${pathname === "/stats" ? "text-indigo-500" : ""}
             `}
             href="/stats"
           >

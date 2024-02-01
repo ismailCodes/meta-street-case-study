@@ -1,4 +1,3 @@
-import { Navbar } from "@/components/Navbar";
 import { TicksByPool } from "@/components/TicksByPool";
 
 export default async function Home() {
