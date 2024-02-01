@@ -1,0 +1,32 @@
+query GetTicksByPool($poolId: ID!) {
+  pool(id: $poolId) {
+    id
+    ticks {
+      id
+      raw
+      limit
+      duration
+      rate
+      durationIndex
+      rateIndex
+      active
+      value
+      shares
+      available
+      pending
+      redemptionPending
+      prev
+      next
+      accrued
+      accrualRate
+      accrualTimestamp
+      principalWeightedDuration
+      interestWeightedMaturity
+      token {
+        id
+        name
+        symbol
+      }
+    }
+  }
+}
