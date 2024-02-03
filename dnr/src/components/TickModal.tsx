@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { BaseModal } from "./BaseModal";
-import { GetTickDataDocument } from "@/gql/graphql";
+import { GetTickDataDocument, GetTickDataQuery } from "@/gql/graphql";
 import { getClient } from "@root/utils/serverSideGqlClient";
 import {
   convertInterestRate,
@@ -24,7 +24,9 @@ export const TickModal: FC<Props> = async ({ poolId, tickId }) => {
     account: "0x2483D85f196d5d21B6850185038Dc72E29575710",
   });
 
-  const depositSum = sumDepositedAmounts(data?.pool?.deposits || []);
+  const depositSum = sumDepositedAmounts(
+    data?.pool?.deposits.filter((deposit) => deposit.tick.id === tickId) || []
+  );
   const sharesSum = sumShares(
     data?.pool?.deposits.filter((deposit) => deposit.tick.id === tickId) || []
   );
@@ -70,7 +72,7 @@ export const TickModal: FC<Props> = async ({ poolId, tickId }) => {
 
           {/* deposits */}
           <div className="flex w-full justify-between items-center">
-            <p className="text-xs text-gray-500 font-normal">DEPOSITS</p>
+            <p className="text-xs text-gray-500 font-normal">TOTAL DEPOSITS</p>
             <p className="text-sm text-gray-900 font-normal">
               {formatEther(depositSum).slice(0, 5)}{" "}
               {data?.pool?.currencyToken.symbol}
@@ -85,6 +87,8 @@ export const TickModal: FC<Props> = async ({ poolId, tickId }) => {
             poolId={poolId as Address}
             depositSum={depositSum}
             shares={sharesSum}
+            pool={data?.pool as GetTickDataQuery["pool"]}
+            tickId={tickId as Address}
           />
         </div>
       </div>

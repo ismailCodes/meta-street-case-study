@@ -3,7 +3,10 @@ query GetTicksByPool($poolId: ID!) {
       id
       collateralToken {
         name,
-     },
+      },
+      currencyToken {
+        symbol
+      },
       ticks {
         id
         raw
@@ -29,6 +32,14 @@ query GetTicksByPool($poolId: ID!) {
           id
           name
           symbol
+        }
+      },
+      deposits {
+        account,
+        depositedAmount,
+        shares,
+        tick {
+          id,
         }
       }
     }

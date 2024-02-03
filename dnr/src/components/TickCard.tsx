@@ -8,6 +8,8 @@ export const TickCard = ({
   rate,
   poolId,
   tickId,
+  totalDeposits,
+  poolCurrencySymbol,
 }: {
   tokenName: string;
   limit: string;
@@ -15,6 +17,8 @@ export const TickCard = ({
   rate: string;
   poolId: string;
   tickId: string;
+  totalDeposits: string;
+  poolCurrencySymbol: string;
 }) => {
   return (
     <Link href={`/pools/${poolId}?tickId=${tickId}`}>
@@ -41,21 +45,21 @@ export const TickCard = ({
               </p>
             </div>
           </div>
-          <div className="flex w-full h-px bg-gray-300 my-1"></div>
+          <div className="flex w-full h-px bg-gray-300 my-3"></div>
 
           {/* Loan limit */}
           <div className="flex w-full justify-between">
-            <p className="text-sm text-gray-500 font-normal">Loan limits</p>
-            <p className="text-sm text-gray-900 font-normal">
-              {weiToWeth(limit)} WETH
+            <p className="text-xs text-gray-500 font-normal">LOAN LIMITS</p>
+            <p className="text-sm text-gray-700 font-semibold">
+              {weiToWeth(limit)} {poolCurrencySymbol}
             </p>
           </div>
 
           {/* Loan limit */}
           <div className="flex w-full justify-between">
-            <p className="text-sm text-gray-500 font-normal">Loan limits</p>
-            <p className="text-sm text-gray-900 font-normal">
-              {weiToWeth(limit)} WETH
+            <p className="text-xs text-gray-500 font-normal">TOTAL DEPOSITS</p>
+            <p className="text-sm text-gray-700 font-semibold">
+              {totalDeposits.slice(0, 5)} {poolCurrencySymbol}
             </p>
           </div>
         </div>

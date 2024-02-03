@@ -16,6 +16,7 @@ query GetTickData($poolId: ID!, $tickId: Bytes!, $account: Bytes!) {
     deposits(where: {account: $account}) {
       depositedAmount,
       shares,
+      account,
       tick {
         id,
       }
