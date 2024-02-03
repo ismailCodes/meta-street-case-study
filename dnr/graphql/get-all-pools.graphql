@@ -1,0 +1,12 @@
+query GetAllPools {
+  pools {
+    id
+    collateralToken {
+      name,
+    },
+    currencyToken {
+      symbol
+    },
+    totalValueLocked
+  }
+}

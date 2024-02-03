@@ -20,6 +20,8 @@
     "pino-pretty": "^10.3.1",
     "react": "^18",
     "react-dom": "^18",
+    "react-hot-toast": "^2.4.1",
+    "react-toastify": "^10.0.4",
     "urql": "^4.0.6",
     "viem": "^2.7.1",
     "wagmi": "^2.5.5"

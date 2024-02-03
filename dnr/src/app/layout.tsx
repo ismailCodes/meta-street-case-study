@@ -1,15 +1,14 @@
 import { Navbar } from "@/components/Navbar";
 import ContextProvider from "@/context";
 import { config } from "@root/config";
-import { QueryClient } from "@tanstack/react-query";
 import { Inter } from "next/font/google";
 import { headers } from "next/headers";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { cookieToInitialState } from "wagmi";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
-
-const queryClient = new QueryClient();
 
 export default function RootLayout({
   children,
@@ -22,6 +21,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ContextProvider initialState={initialState}>
+          <ToastContainer />
+
           <main className="flex min-h-screen flex-col items-center py-12 px-4 lg:px-12">
             <Navbar />
 

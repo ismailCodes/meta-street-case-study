@@ -1,3 +1,4 @@
+import { transform } from "next/dist/build/swc";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -12,6 +13,16 @@ const config: Config = {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      },
+      keyframes: {
+        slide: {
+          "0%": {
+            transform: "translateX(-128px)",
+          },
+          "100%": {
+            transform: "translateX(50vw)",
+          },
+        },
       },
     },
   },

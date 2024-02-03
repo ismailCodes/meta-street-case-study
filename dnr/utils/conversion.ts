@@ -33,6 +33,27 @@ export const bigintToNumber = (value: bigint): string => {
 };
 
 export const convertInterestRate = (rate: number): string => {
-  const readableRate = rate / 1e18;
+  const readableRate = rate / 1e8;
   return `${readableRate}%`;
+};
+
+export const sumDepositedAmounts = (
+  deposits: Array<{
+    depositedAmount: bigint;
+  }>
+) => {
+  return deposits.reduce((acc: bigint, deposit: any) => {
+    const depositAmount = BigInt(deposit.depositedAmount);
+    return acc + depositAmount;
+  }, 0n);
+};
+
+export const sumShares = (shares: any) => {
+  if (shares.length === 0) {
+    return 0n;
+  }
+  return shares.reduce((acc: bigint, share: any) => {
+    const shareAmount = BigInt(share.shares);
+    return acc + shareAmount;
+  }, 0n);
 };

@@ -1,0 +1,24 @@
+query GetTickData($poolId: ID!, $tickId: Bytes!, $account: Bytes!) {
+  pool(id: $poolId) {
+    id,
+    collateralToken {
+      name,
+    },
+    currencyToken {
+      symbol
+    },
+    ticks(where: {id: $tickId} ) {
+      limit,
+      duration,
+      rate,
+      raw,
+    }
+    deposits(where: {account: $account}) {
+      depositedAmount,
+      shares,
+      tick {
+        id,
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import { defaultWagmiConfig } from "@web3modal/wagmi/react/config";
-import { cookieStorage, createStorage } from "wagmi";
+import { cookieStorage, createStorage, http } from "wagmi";
 import { mainnet, sepolia } from "wagmi/chains";
 
 export const projectId =
@@ -24,4 +24,8 @@ export const config = defaultWagmiConfig({
   }),
   enableWalletConnect: true,
   enableInjected: true,
+  transports: {
+    [mainnet.id]: http(),
+    [sepolia.id]: http(),
+  },
 });
