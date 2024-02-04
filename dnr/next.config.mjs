@@ -17,6 +17,22 @@ const nextConfig = {
       },
     ];
   },
+  async headers() {
+    return [
+      {
+        source: "/pools/:id*",
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
+
+
+^\/pools\/(0x[a-fA-F0-9]{40})\?tickId=(0x[a-fA-F0-9]+)$
