@@ -157,6 +157,7 @@ export const DepositForm: FC<Props> = ({
   };
 
   const userDeposits = useMemo(() => {
+    console.log({ addressInside: address });
     return sumDepositedAmounts(
       pool?.deposits.filter(
         (deposit) =>
@@ -174,6 +175,7 @@ export const DepositForm: FC<Props> = ({
     shares,
     pool,
     tickId,
+    address,
   });
 
   const isLoading =
