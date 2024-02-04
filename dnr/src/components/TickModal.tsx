@@ -1,7 +1,4 @@
-import { FC } from "react";
-import { BaseModal } from "./BaseModal";
 import { GetTickDataDocument, GetTickDataQuery } from "@/gql/graphql";
-import { getClient } from "@root/utils/serverSideGqlClient";
 import {
   convertInterestRate,
   secondsToDays,
@@ -9,8 +6,11 @@ import {
   sumShares,
   weiToWeth,
 } from "@root/utils/conversion";
+import { getClient } from "@root/utils/serverSideGqlClient";
+import { FC } from "react";
+import { Address, formatEther } from "viem";
+import { BaseModal } from "./BaseModal";
 import { DepositForm } from "./DepositForm";
-import { Address, formatEther, formatUnits } from "viem";
 
 type Props = {
   poolId: string;
@@ -21,7 +21,6 @@ export const TickModal: FC<Props> = async ({ poolId, tickId }) => {
   const { data } = await getClient().query(GetTickDataDocument, {
     poolId,
     tickId,
-    account: "0x2483D85f196d5d21B6850185038Dc72E29575710",
   });
 
   const depositSum = sumDepositedAmounts(

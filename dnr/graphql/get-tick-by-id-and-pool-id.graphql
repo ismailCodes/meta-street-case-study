@@ -1,4 +1,4 @@
-query GetTickData($poolId: ID!, $tickId: Bytes!, $account: Bytes!) {
+query GetTickData($poolId: ID!, $tickId: Bytes!) {
   pool(id: $poolId) {
     id,
     collateralToken {
@@ -14,7 +14,7 @@ query GetTickData($poolId: ID!, $tickId: Bytes!, $account: Bytes!) {
       rate,
       raw,
     }
-    deposits(where: {account: $account}) {
+    deposits {
       depositedAmount,
       shares,
       account,

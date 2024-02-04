@@ -27,6 +27,7 @@ export const BaseModal: FC<Props> = ({ children, onCloseRedirectTo }) => {
           &#8203;
         </span>
         <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+          {/* CLOSE BUTTON */}
           <div className="absolute top-0 right-0 p-1 hover:bg-gray-200 hover: rounded-full m-1 ">
             <Link href={onCloseRedirectTo}>
               <svg
@@ -45,6 +46,8 @@ export const BaseModal: FC<Props> = ({ children, onCloseRedirectTo }) => {
               </svg>
             </Link>
           </div>
+
+          {/* MODAL CONTENT */}
           {children}
         </div>
       </div>

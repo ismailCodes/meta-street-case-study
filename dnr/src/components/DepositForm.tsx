@@ -3,19 +3,19 @@
 import { GetTickDataQuery } from "@/gql/graphql";
 import { abi } from "@root/contract/abi";
 import { MAX_ALLOWANCE, sumDepositedAmounts } from "@root/utils/conversion";
+import { useAllowance } from "@root/utils/useAllowance";
+import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import { Address, erc20Abi, formatEther, parseEther } from "viem";
 import {
   useAccount,
   useBalance,
-  useReadContract,
   useTransaction,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
 import { Loader } from "./Loader";
 import { notifyError, notifySuccess } from "./Notify";
-import { useRouter } from "next/navigation";
 
 type Props = {
   tick: bigint;
@@ -56,17 +56,12 @@ export const DepositForm: FC<Props> = ({
     },
   });
 
-  // CHECK FOR ALLOWANCE
-  const { data: allowanceData, refetch: refetchAllowance } = useReadContract({
-    address: pool?.currencyToken.id,
-    abi: erc20Abi,
-    functionName: "allowance",
-    args: [address!, poolId],
-    query: {
-      enabled: !!address,
-      refetchOnWindowFocus: false,
-    },
-  });
+  // ALLOWANCE STATE
+  const { allowanceData, refetchAllowance } = useAllowance(
+    pool?.currencyToken.id,
+    address!,
+    poolId
+  );
 
   const {
     data: hash,
@@ -90,9 +85,11 @@ export const DepositForm: FC<Props> = ({
     isError,
     isLoading: isTransactionLoading,
   } = useWaitForTransactionReceipt({
+    confirmations: 1,
     hash,
     query: {
       enabled: !!hash,
+      refetchInterval: 1000,
     },
   });
 
@@ -116,16 +113,8 @@ export const DepositForm: FC<Props> = ({
         router.push(`/pools/${poolId}`);
       }
     }
-  }, [
-    isSuccess,
-    isError,
-    error,
-    refetchAllowance,
-    router,
-    poolId,
-    isAllowed,
-    shouldCloseModal,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess, isError]);
 
   const handleAllowanceApproval = () => {
     writeContract({
@@ -182,16 +171,20 @@ export const DepositForm: FC<Props> = ({
     isTransactionLoading ||
     isTransactionApprovalPending;
 
-  console.log({ allowanceData });
-
   return (
     <>
+      <pre className="text-black">
+        {JSON.stringify({ isAllowed, shouldCloseModal })}
+      </pre>
+      {/* CURRENT ADDRESS BALANCE IN THIS TICK */}
       <div className="flex w-full justify-between items-center">
         <p className="text-xs text-gray-500 font-normal">mLCT BALANCE</p>
         <p className="text-sm text-gray-900 font-normal">
           {formatEther(userDeposits).slice(0, 5)} {pool?.currencyToken.symbol}
         </p>
       </div>
+
+      {/* TRANSACTION FORM */}
       <form className="flex w-full flex-col items-center mb-1 gap-4">
         {/*  TOGGLE BETWEEN DEPOSIT AND REDEED */}
         <div className="w-full flex gap-2">
@@ -200,12 +193,11 @@ export const DepositForm: FC<Props> = ({
               setInputAmount(null);
               setShownTransactionUi("DEPOSIT");
             }}
-            className={`w-full p-2 text-center font-medium text-l 
-                                ${
-                                  shownTransactionUi === "DEPOSIT"
-                                    ? "border-b-2 border-indigo-500 pb-2 text-indigo-500"
-                                    : " text-gray-300"
-                                }`}
+            className={`w-full p-2 text-center font-medium text-l ${
+              shownTransactionUi === "DEPOSIT"
+                ? "border-b-2 border-indigo-500 pb-2 text-indigo-500"
+                : " text-gray-300"
+            }`}
             type="button"
           >
             Deposit
@@ -215,12 +207,11 @@ export const DepositForm: FC<Props> = ({
               setInputAmount(null);
               setShownTransactionUi("REDEEM");
             }}
-            className={`w-full p-2 text-center font-medium text-l 
-                                ${
-                                  shownTransactionUi === "REDEEM"
-                                    ? "border-b-2 border-indigo-500 pb-2 text-indigo-500"
-                                    : " text-gray-300"
-                                }`}
+            className={`w-full p-2 text-center font-medium text-l ${
+              shownTransactionUi === "REDEEM"
+                ? "border-b-2 border-indigo-500 pb-2 text-indigo-500"
+                : " text-gray-300"
+            }`}
             type="button"
           >
             Redeem
@@ -250,6 +241,7 @@ export const DepositForm: FC<Props> = ({
             {pool?.currencyToken.symbol}
           </div>
 
+          {/* CURRENT WALLET BALANCE AND MAX BUTTON */}
           {accountStatus === "connected" && !isBalanceLoading && (
             <div className="absolute -bottom-6 right-2 text-xs text-indigo-500 font-medium hover:text-indigo-600">
               {shownTransactionUi === "DEPOSIT" && (
@@ -273,7 +265,8 @@ export const DepositForm: FC<Props> = ({
             </div>
           )}
         </div>
-        {/* ACTION BUTTONS */}
+
+        {/* DEPOSIT / REDEEM BUTTONS */}
         <div className="w-full flex gap-2">
           {shownTransactionUi === "DEPOSIT" ? (
             <button
@@ -311,6 +304,7 @@ export const DepositForm: FC<Props> = ({
             </button>
           )}
         </div>
+
         {isLoading && <Loader />}
       </form>
     </>

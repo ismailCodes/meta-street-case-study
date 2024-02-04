@@ -60,19 +60,17 @@ export const TicksByPool: FC<Props> = async ({ poolId }) => {
             )[0]?.depositedAmount
           );
           return (
-            <>
-              <TickCard
-                key={tick.id}
-                tokenName={tick.token?.name || "MetaStreet V2 Deposit"}
-                limit={tick.limit}
-                duration={tick.duration}
-                rate={tick.rate}
-                poolId={poolId}
-                tickId={tick.id}
-                totalDeposits={formatedDepostedAmount}
-                poolCurrencySymbol={data?.pool?.currencyToken.symbol || ""}
-              />
-            </>
+            <TickCard
+              key={tick.id}
+              tokenName={tick.token?.name || "MetaStreet V2 Deposit"}
+              limit={tick.limit}
+              duration={tick.duration}
+              rate={tick.rate}
+              poolId={poolId}
+              tickId={tick.id}
+              totalDeposits={formatedDepostedAmount}
+              poolCurrencySymbol={data?.pool?.currencyToken.symbol || ""}
+            />
           );
         })}
       </div>

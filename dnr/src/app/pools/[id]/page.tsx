@@ -1,4 +1,3 @@
-import { BaseModal } from "@/components/BaseModal";
 import { TickModal } from "@/components/TickModal";
 import { TicksByPool } from "@/components/TicksByPool";
 
