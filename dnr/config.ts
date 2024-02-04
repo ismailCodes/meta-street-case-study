@@ -10,7 +10,7 @@ if (!projectId) throw new Error("Project ID is not defined");
 const metadata = {
   name: "Web3Modal",
   description: "Web3Modal Example",
-  url: "http://localhost:3000",
+  url: process.env.WAGMI_PROJECT_URL || "http://localhost:3000",
   icons: ["https://avatars.githubusercontent.com/u/37784886"],
 };
 
