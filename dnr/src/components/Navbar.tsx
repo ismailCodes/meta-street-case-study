@@ -30,14 +30,6 @@ export const Navbar = () => {
           >
             <span>Pools</span>
           </Link>
-          <Link
-            className={`flex items-center justify-center gap-2 px-8 text-sm font-bold
-            ${pathname === "/stats" ? "text-indigo-500" : ""}
-            `}
-            href="/stats"
-          >
-            <span>Stats</span>
-          </Link>
         </div>
       </div>
 

@@ -5,6 +5,7 @@ query GetTickData($poolId: ID!, $tickId: Bytes!, $account: Bytes!) {
       name,
     },
     currencyToken {
+      id,
       symbol
     },
     ticks(where: {id: $tickId} ) {

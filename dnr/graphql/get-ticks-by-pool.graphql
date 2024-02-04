@@ -2,6 +2,7 @@ query GetTicksByPool($poolId: ID!) {
     pool(id: $poolId) {
       id
       collateralToken {
+        id,
         name,
       },
       currencyToken {

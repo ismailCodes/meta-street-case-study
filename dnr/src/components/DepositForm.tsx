@@ -1,19 +1,21 @@
 "use client";
 
+import { GetTickDataQuery } from "@/gql/graphql";
 import { abi } from "@root/contract/abi";
+import { MAX_ALLOWANCE, sumDepositedAmounts } from "@root/utils/conversion";
 import { FC, useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import { Address, formatEther, parseEther } from "viem";
+import { Address, erc20Abi, formatEther, parseEther } from "viem";
 import {
   useAccount,
   useBalance,
+  useReadContract,
   useTransaction,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
 import { Loader } from "./Loader";
-import { GetTickDataQuery } from "@/gql/graphql";
-import { sumDepositedAmounts } from "@root/utils/conversion";
+import { notifyError, notifySuccess } from "./Notify";
+import { useRouter } from "next/navigation";
 
 type Props = {
   tick: bigint;
@@ -32,16 +34,36 @@ export const DepositForm: FC<Props> = ({
   pool,
   tickId,
 }) => {
+  // UI STATE
   const [inputAmount, setInputAmount] = useState<number | null>(null);
   const [shownTransactionUi, setShownTransactionUi] = useState<
     "DEPOSIT" | "REDEEM"
   >("DEPOSIT");
 
+  const [shouldCloseModal, setShouldCloseModal] = useState(false);
+
+  const router = useRouter();
+
+  // ACCOUNT STATE
   const { address, status: accountStatus } = useAccount();
   const { data, isLoading: isBalanceLoading } = useBalance({
     address,
+    token: pool?.currencyToken.id,
     query: {
+      // CHECKS THE BALANCE ONLY WHEN THE ACCOUNT IS CONNECTED
       enabled: accountStatus === "connected",
+      refetchOnWindowFocus: false,
+    },
+  });
+
+  // CHECK FOR ALLOWANCE
+  const { data: allowanceData, refetch: refetchAllowance } = useReadContract({
+    address: pool?.currencyToken.id,
+    abi: erc20Abi,
+    functionName: "allowance",
+    args: [address!, poolId],
+    query: {
+      enabled: !!address,
       refetchOnWindowFocus: false,
     },
   });
@@ -50,17 +72,24 @@ export const DepositForm: FC<Props> = ({
     data: hash,
     writeContract,
     error,
-    isPending: isWriteContractPending,
+    isPending: isTransactionApprovalPending,
   } = useWriteContract();
 
-  const { isFetching: isTransactionFetching } = useTransaction({
+  const {
+    isFetching: isTransactionFetching,
+    isLoading: isWriteContractLoading,
+  } = useTransaction({
     hash,
     query: {
       enabled: !!hash,
     },
   });
 
-  const { isSuccess, isError } = useWaitForTransactionReceipt({
+  const {
+    isSuccess,
+    isError,
+    isLoading: isTransactionLoading,
+  } = useWaitForTransactionReceipt({
     hash,
     query: {
       enabled: !!hash,
@@ -68,18 +97,44 @@ export const DepositForm: FC<Props> = ({
   });
 
   const maxDepositAmount = parseFloat(formatEther(data?.value || BigInt(0)));
+  const isAllowed = !!allowanceData && allowanceData > BigInt(inputAmount || 0);
 
-  const notifySuccess = () => toast("Transaction successful");
-  const notifyError = () => toast("Transaction failed");
-
+  // WATCHES FOR TRANSACTION STATUS AND UPDATES UI
   useEffect(() => {
     if (isSuccess) {
       notifySuccess();
+      setInputAmount(null);
+      refetchAllowance();
+      if (isAllowed && shouldCloseModal) {
+        router.push(`/pools/${poolId}`);
+      }
     } else if (isError || !!error) {
       notifyError();
-      setInputAmount(0);
+      setInputAmount(null);
+      if (isAllowed) {
+        refetchAllowance();
+        router.push(`/pools/${poolId}`);
+      }
     }
-  }, [isSuccess, isError, error]);
+  }, [
+    isSuccess,
+    isError,
+    error,
+    refetchAllowance,
+    router,
+    poolId,
+    isAllowed,
+    shouldCloseModal,
+  ]);
+
+  const handleAllowanceApproval = () => {
+    writeContract({
+      abi: erc20Abi,
+      address: pool?.currencyToken.id,
+      functionName: "approve",
+      args: [poolId, MAX_ALLOWANCE],
+    });
+  };
 
   const handleDeposit = (type: "DEPOSIT" | "REDEEM") => {
     writeContract({
@@ -105,7 +160,6 @@ export const DepositForm: FC<Props> = ({
       setInputAmount(parseFloat(formatEther(shares || BigInt(0))));
     } else {
       if (isNaN(inputAmount)) {
-        console.log({ inputAmount });
         setInputAmount(null);
         return;
       }
@@ -121,7 +175,15 @@ export const DepositForm: FC<Props> = ({
     ) || []
   );
 
-  const isLoading = isBalanceLoading || isTransactionFetching;
+  const isLoading =
+    isBalanceLoading ||
+    isTransactionFetching ||
+    isWriteContractLoading ||
+    isTransactionLoading ||
+    isTransactionApprovalPending;
+
+  console.log({ allowanceData });
+
   return (
     <>
       <div className="flex w-full justify-between items-center">
@@ -185,7 +247,7 @@ export const DepositForm: FC<Props> = ({
           />
 
           <div className="absolute right-4 text-xs text-gray-500 font-medium">
-            {data?.symbol}
+            {pool?.currencyToken.symbol}
           </div>
 
           {accountStatus === "connected" && !isBalanceLoading && (
@@ -215,7 +277,14 @@ export const DepositForm: FC<Props> = ({
         <div className="w-full flex gap-2">
           {shownTransactionUi === "DEPOSIT" ? (
             <button
-              onClick={() => handleDeposit("DEPOSIT")}
+              onClick={() => {
+                if (!isAllowed) {
+                  handleAllowanceApproval();
+                } else {
+                  handleDeposit("DEPOSIT");
+                  setShouldCloseModal(true);
+                }
+              }}
               type="button"
               className="bg-indigo-500 text-white p-2 rounded-md w-full hover:bg-indigo-600 
                             disabled:bg-gray-300 disabled:cursor-not-allowed"
@@ -223,7 +292,7 @@ export const DepositForm: FC<Props> = ({
                 isLoading || inputAmount === 0 || accountStatus !== "connected"
               }
             >
-              Deposit
+              {isAllowed ? "Deposit" : "Approve"}
             </button>
           ) : (
             <button

@@ -1,3 +1,5 @@
+export const MAX_ALLOWANCE = BigInt(2 ** 256 - 1) - 1n;
+
 export const secondsToDays = (seconds: string) => {
   const parsedSeconds = parseInt(seconds, 10);
 
@@ -56,4 +58,15 @@ export const sumShares = (shares: any) => {
     const shareAmount = BigInt(share.shares);
     return acc + shareAmount;
   }, 0n);
+};
+
+export const calculatePercentageBigInt = (
+  numerator: bigint,
+  denominator: bigint
+): number => {
+  if (denominator === 0n) {
+    return NaN;
+  }
+  const percentage = Number((numerator * 100n) / denominator);
+  return percentage;
 };

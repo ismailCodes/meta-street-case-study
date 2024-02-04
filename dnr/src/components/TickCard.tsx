@@ -1,5 +1,10 @@
-import { secondsToDays, weiToWeth } from "@root/utils/conversion";
+import {
+  convertInterestRate,
+  secondsToDays,
+  weiToWeth,
+} from "@root/utils/conversion";
 import Link from "next/link";
+import { formatUnits } from "viem";
 
 export const TickCard = ({
   tokenName,
@@ -31,7 +36,12 @@ export const TickCard = ({
             {/* RATE */}
             <>
               <div className="flex w-full flex-col gap-1">
-                <p className="text-xl text-indigo-500 font-semibold">12.4%</p>
+                <p className="text-xl text-indigo-500 font-semibold">
+                  {convertInterestRate(
+                    Number(formatUnits(BigInt(rate), 18))
+                  ).slice(0, 5)}
+                  %
+                </p>
                 <p className="text-[9px] text-gray-500 font-light">
                   Current APR
                 </p>
