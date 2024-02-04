@@ -173,9 +173,6 @@ export const DepositForm: FC<Props> = ({
 
   return (
     <>
-      <pre className="text-black">
-        {JSON.stringify({ isAllowed, shouldCloseModal })}
-      </pre>
       {/* CURRENT ADDRESS BALANCE IN THIS TICK */}
       <div className="flex w-full justify-between items-center">
         <p className="text-xs text-gray-500 font-normal">mLCT BALANCE</p>

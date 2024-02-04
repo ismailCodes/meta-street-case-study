@@ -19,11 +19,11 @@ export const TicksByPool: FC<Props> = async ({ poolId }) => {
   });
 
   const collectionData = await fetch(
-    `https://api-sepolia.reservoir.tools/collections/v7?id=${data?.pool?.collateralToken.id}`,
+    `${process.env.SEPOLIA_RESERVOIR_API_BASE_URL}?id=${data?.pool?.collateralToken.id}`,
     {
       headers: {
         accept: "*/*",
-        "x-api-key": "eeca9625-86af-5e3a-82b7-68ccbe00b3e8",
+        "x-api-key": process.env.RESERVOIR_API_KEY || "",
       },
     }
   )

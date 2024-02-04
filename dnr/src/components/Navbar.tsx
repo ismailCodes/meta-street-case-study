@@ -3,9 +3,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MetastreetLogo } from "./MetastreetLogo";
 
-function ConnectButton() {
+const ConnectButton = () => {
   return <w3m-button />;
-}
+};
 
 export const Navbar = () => {
   const pathname = usePathname();
