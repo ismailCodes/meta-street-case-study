@@ -18,16 +18,10 @@ type Props = {
 };
 
 export const TickModal: FC<Props> = async ({ poolId, tickId }) => {
-  const { data } = await getClient().query(
-    GetTickDataDocument,
-    {
-      poolId,
-      tickId,
-    },
-    {
-      requestPolicy: "network-only",
-    }
-  );
+  const { data } = await getClient().query(GetTickDataDocument, {
+    poolId,
+    tickId,
+  });
 
   const depositSum = sumDepositedAmounts(
     data?.pool?.deposits.filter((deposit) => deposit.tick.id === tickId) || []

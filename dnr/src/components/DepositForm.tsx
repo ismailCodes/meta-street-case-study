@@ -5,7 +5,7 @@ import { abi } from "@root/contract/abi";
 import { MAX_ALLOWANCE, sumDepositedAmounts } from "@root/utils/conversion";
 import { useAllowance } from "@root/utils/useAllowance";
 import { useRouter } from "next/navigation";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { Address, erc20Abi, formatEther, parseEther } from "viem";
 import {
   useAccount,
@@ -156,13 +156,25 @@ export const DepositForm: FC<Props> = ({
     }
   };
 
-  const userDeposits = sumDepositedAmounts(
-    pool?.deposits.filter(
-      (deposit) =>
-        deposit.tick.id === tickId &&
-        deposit.account === address?.toLocaleLowerCase()
-    ) || []
-  );
+  const userDeposits = useMemo(() => {
+    return sumDepositedAmounts(
+      pool?.deposits.filter(
+        (deposit) =>
+          deposit.tick.id === tickId &&
+          deposit.account === address?.toLocaleLowerCase()
+      ) || []
+    );
+  }, [pool?.deposits, tickId, address]);
+
+  console.log({
+    userDeposits,
+    tick,
+    poolId,
+    depositSum,
+    shares,
+    pool,
+    tickId,
+  });
 
   const isLoading =
     isBalanceLoading ||
