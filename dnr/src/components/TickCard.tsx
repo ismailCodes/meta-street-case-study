@@ -26,7 +26,7 @@ export const TickCard = ({
   poolCurrencySymbol: string;
 }) => {
   return (
-    <Link href={`/pools/${poolId}?tickId=${tickId}`}>
+    <Link href={`/pools/${poolId}?tickId=${tickId}`} prefetch>
       <div className="flex flex-col w-full bg-gray-200 rounded-lg overflow-hidden cursor-pointer hover:bg-indigo-50 hover:shadow-indigo-100/50 hover:shadow-md">
         <div className="flex justify-center items-center w-full min-h-12 bg-indigo-700 font-semibold text-sm text-center p-2">
           {tokenName.replace("MetaStreet V2 Deposit: ", "")}
