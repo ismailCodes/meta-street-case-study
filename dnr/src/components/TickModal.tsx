@@ -12,23 +12,34 @@ import { Address, formatEther } from "viem";
 import { BaseModal } from "./BaseModal";
 import { DepositForm } from "./DepositForm";
 
-type Props = {
+interface TickModalProps {
   poolId: string;
   tickId: string;
-};
+}
 
-export const TickModal: FC<Props> = async ({ poolId, tickId }) => {
-  const { data } = await getClient().query(GetTickDataDocument, {
-    poolId,
-    tickId,
-  });
+export const TickModal: FC<TickModalProps> = async ({ poolId, tickId }) => {
+  const { data } = await getClient().query(
+    GetTickDataDocument,
+    {
+      poolId,
+      tickId,
+    },
+    {
+      fetchOptions: {
+        cache: "no-cache",
+      },
+    }
+  );
 
   const depositSum = sumDepositedAmounts(
     data?.pool?.deposits.filter((deposit) => deposit.tick.id === tickId) || []
   );
+
   const sharesSum = sumShares(
     data?.pool?.deposits.filter((deposit) => deposit.tick.id === tickId) || []
   );
+
+  const tokenSymbol = data?.pool?.currencyToken.symbol;
 
   return (
     <BaseModal onCloseRedirectTo={`/pools/${poolId}`}>
@@ -45,8 +56,7 @@ export const TickModal: FC<Props> = async ({ poolId, tickId }) => {
           <div className="flex w-full justify-between items-center">
             <p className="text-xs text-gray-500 font-normal">LOAN LIMITS</p>
             <p className="text-sm text-gray-900 font-normal">
-              {weiToWeth(data?.pool?.ticks[0].limit)}{" "}
-              {data?.pool?.currencyToken.symbol}
+              {weiToWeth(data?.pool?.ticks[0].limit)} {tokenSymbol}
             </p>
           </div>
 
@@ -73,8 +83,7 @@ export const TickModal: FC<Props> = async ({ poolId, tickId }) => {
           <div className="flex w-full justify-between items-center">
             <p className="text-xs text-gray-500 font-normal">TOTAL DEPOSITS</p>
             <p className="text-sm text-gray-900 font-normal">
-              {formatEther(depositSum).slice(0, 5)}{" "}
-              {data?.pool?.currencyToken.symbol}
+              {Math.floor(Number(formatEther(depositSum)))} {tokenSymbol}
             </p>
           </div>
 

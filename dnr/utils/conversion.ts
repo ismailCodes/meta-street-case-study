@@ -44,10 +44,12 @@ export const sumDepositedAmounts = (
     depositedAmount: bigint;
   }>
 ) => {
-  return deposits.reduce((acc: bigint, deposit: any) => {
+  const depositsSum = deposits.reduce((acc: bigint, deposit: any) => {
     const depositAmount = BigInt(deposit.depositedAmount);
     return acc + depositAmount;
   }, 0n);
+
+  return depositsSum;
 };
 
 export const sumShares = (shares: any) => {

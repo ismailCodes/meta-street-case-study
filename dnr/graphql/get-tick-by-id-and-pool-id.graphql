@@ -13,6 +13,9 @@ query GetTickData($poolId: ID!, $tickId: Bytes!) {
       duration,
       rate,
       raw,
+      token {
+        id
+      },
     }
     deposits {
       depositedAmount,

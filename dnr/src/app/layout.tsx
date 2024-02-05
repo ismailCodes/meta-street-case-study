@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { cookieToInitialState } from "wagmi";
 import "./globals.css";
+import { useMemo } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,7 +16,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const initialState = cookieToInitialState(config, headers().get("cookie"));
+  const initialState = useMemo(
+    () => cookieToInitialState(config, headers().get("cookie")),
+    []
+  );
 
   return (
     <html lang="en">

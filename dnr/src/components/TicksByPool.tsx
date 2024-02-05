@@ -9,11 +9,11 @@ interface ReservoirCollection {
   collections: Array<{ image: string }>;
 }
 
-type Props = {
+interface TicksByPoolProps {
   poolId: string;
-};
+}
 
-export const TicksByPool: FC<Props> = async ({ poolId }) => {
+export const TicksByPool: FC<TicksByPoolProps> = async ({ poolId }) => {
   const { data } = await getClient().query(GetTicksByPoolDocument, {
     poolId,
   });
@@ -34,9 +34,21 @@ export const TicksByPool: FC<Props> = async ({ poolId }) => {
     .catch((e) => console.log(e));
 
   const ticks = data?.pool?.ticks;
+
+  if (ticks?.length === 0) {
+    return (
+      <div className="flex flex-col w-full max-w-5xl overflow-hidden p-3">
+        <h1 className="text-2xl font-semibold text-gray-100 tracking-widest">
+          No Ticks Available in this pool
+        </h1>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col w-full max-w-5xl overflow-hidden p-3">
       <div className="flex items-center w-full mb-4 gap-2 ">
+        {/* COLLECTION INFORMATION */}
         <Image
           src={collectionData?.image || ""}
           alt="Reservoir Collection"
@@ -49,9 +61,12 @@ export const TicksByPool: FC<Props> = async ({ poolId }) => {
           {data?.pool?.collateralToken.name}
         </h1>
       </div>
+
       <p className="text-gray-500 font-light text-xs mb-4">
         Choose a tick to get more information
       </p>
+
+      {/* TICKS LIST */}
       <div className="w-full grid  md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl">
         {ticks?.map((tick) => {
           const formatedDepostedAmount = weiToWeth(

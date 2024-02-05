@@ -15,7 +15,7 @@ const metadata = {
 };
 
 export const config = defaultWagmiConfig({
-  chains: [mainnet, sepolia],
+  chains: [sepolia],
   projectId,
   metadata,
   ssr: true,
@@ -25,7 +25,8 @@ export const config = defaultWagmiConfig({
   enableWalletConnect: true,
   enableInjected: true,
   transports: {
-    [mainnet.id]: http(),
-    [sepolia.id]: http(),
+    [sepolia.id]: http(
+      "https://eth-sepolia.g.alchemy.com/v2/cABfI72Efm9bxVEo3QiJcDJGQ1smNjcP"
+    ),
   },
 });

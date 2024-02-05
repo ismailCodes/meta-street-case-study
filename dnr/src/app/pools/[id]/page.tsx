@@ -1,14 +1,14 @@
 import { TickModal } from "@/components/TickModal";
 import { TicksByPool } from "@/components/TicksByPool";
 
-type Props = {
+interface PoolsPageProps {
   searchParams: Record<string, string> | null | undefined;
   params: {
     id: string;
   };
-};
+}
 
-export default async function Pools({ params, searchParams }: Props) {
+export default async function Pools({ params, searchParams }: PoolsPageProps) {
   const tickId = searchParams?.tickId;
 
   return (

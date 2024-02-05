@@ -4158,6 +4158,7 @@ export type GetTickDataQuery = {
       duration: any;
       rate: any;
       raw: any;
+      token?: { __typename?: "CurrencyToken"; id: any } | null;
     }>;
     deposits: Array<{
       __typename?: "Deposit";
@@ -4382,6 +4383,19 @@ export const GetTickDataDocument = {
                       },
                       { kind: "Field", name: { kind: "Name", value: "rate" } },
                       { kind: "Field", name: { kind: "Name", value: "raw" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "token" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "id" },
+                            },
+                          ],
+                        },
+                      },
                     ],
                   },
                 },

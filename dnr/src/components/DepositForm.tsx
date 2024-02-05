@@ -2,10 +2,10 @@
 
 import { GetTickDataQuery } from "@/gql/graphql";
 import { abi } from "@root/contract/abi";
-import { MAX_ALLOWANCE, sumDepositedAmounts } from "@root/utils/conversion";
+import { MAX_ALLOWANCE } from "@root/utils/conversion";
 import { useAllowance } from "@root/utils/useAllowance";
 import { useRouter } from "next/navigation";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Address, erc20Abi, formatEther, parseEther } from "viem";
 import {
   useAccount,
@@ -17,22 +17,20 @@ import {
 import { Loader } from "./Loader";
 import { notifyError, notifySuccess } from "./Notify";
 
-type Props = {
+interface DepositFormProps {
   tick: bigint;
   poolId: Address;
   depositSum: bigint;
   shares: bigint;
   pool: GetTickDataQuery["pool"];
   tickId: Address;
-};
+}
 
-export const DepositForm: FC<Props> = ({
+export const DepositForm: FC<DepositFormProps> = ({
   tick,
   poolId,
   depositSum,
-  shares,
   pool,
-  tickId,
 }) => {
   // UI STATE
   const [inputAmount, setInputAmount] = useState<number | null>(null);
@@ -45,13 +43,25 @@ export const DepositForm: FC<Props> = ({
   const router = useRouter();
 
   // ACCOUNT STATE
-  const { address, status: accountStatus } = useAccount();
+  const { address } = useAccount();
+
+  // SOMETIMES THE QUERY COMES BACK WITH MISSING DEPOSITS
+  // SO I DECIDED TO GET THE BALANCE DIRECTLY FROM THE CONTRACT
+  const { data: mlctTokenData } = useBalance({
+    address,
+    token: pool?.ticks[0].token?.id,
+    query: {
+      enabled: !!pool?.ticks[0].token && !!pool?.ticks[0].token.id && !!address,
+      refetchOnWindowFocus: false,
+    },
+  });
+
   const { data, isLoading: isBalanceLoading } = useBalance({
     address,
     token: pool?.currencyToken.id,
     query: {
       // CHECKS THE BALANCE ONLY WHEN THE ACCOUNT IS CONNECTED
-      enabled: accountStatus === "connected",
+      enabled: !!address,
       refetchOnWindowFocus: false,
     },
   });
@@ -94,7 +104,9 @@ export const DepositForm: FC<Props> = ({
   });
 
   const maxDepositAmount = parseFloat(formatEther(data?.value || BigInt(0)));
-  const isAllowed = !!allowanceData && allowanceData > BigInt(inputAmount || 0);
+  const isAllowed =
+    !!allowanceData &&
+    allowanceData > parseEther(inputAmount?.toString() || "0");
 
   // WATCHES FOR TRANSACTION STATUS AND UPDATES UI
   useEffect(() => {
@@ -114,7 +126,7 @@ export const DepositForm: FC<Props> = ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess, isError]);
+  }, [isSuccess, isError, error]);
 
   const handleAllowanceApproval = () => {
     writeContract({
@@ -133,7 +145,7 @@ export const DepositForm: FC<Props> = ({
       args:
         type === "DEPOSIT"
           ? [tick, parseEther((inputAmount || "0").toString()), BigInt(0)]
-          : [tick, shares],
+          : [tick, parseEther((inputAmount || "0").toString())],
     });
   };
 
@@ -141,12 +153,7 @@ export const DepositForm: FC<Props> = ({
     const inputAmount = parseFloat(e.target.value);
 
     if (inputAmount > maxDepositAmount && shownTransactionUi === "DEPOSIT") {
-      setInputAmount(maxDepositAmount);
-    } else if (
-      inputAmount > parseFloat(formatEther(shares || BigInt(0))) &&
-      shownTransactionUi === "REDEEM"
-    ) {
-      setInputAmount(parseFloat(formatEther(shares || BigInt(0))));
+      setInputAmount(maxDepositAmount < 0.001 ? 0 : maxDepositAmount);
     } else {
       if (isNaN(inputAmount)) {
         setInputAmount(null);
@@ -155,28 +162,6 @@ export const DepositForm: FC<Props> = ({
       setInputAmount(inputAmount || 0);
     }
   };
-
-  const userDeposits = useMemo(() => {
-    console.log({ addressInside: address });
-    return sumDepositedAmounts(
-      pool?.deposits.filter(
-        (deposit) =>
-          deposit.tick.id === tickId &&
-          deposit.account === address?.toLocaleLowerCase()
-      ) || []
-    );
-  }, [pool?.deposits, tickId, address]);
-
-  console.log({
-    userDeposits,
-    tick,
-    poolId,
-    depositSum,
-    shares,
-    pool,
-    tickId,
-    address,
-  });
 
   const isLoading =
     isBalanceLoading ||
@@ -190,9 +175,16 @@ export const DepositForm: FC<Props> = ({
       {/* CURRENT ADDRESS BALANCE IN THIS TICK */}
       <div className="flex w-full justify-between items-center">
         <p className="text-xs text-gray-500 font-normal">mLCT BALANCE</p>
-        <p className="text-sm text-gray-900 font-normal">
-          {formatEther(userDeposits).slice(0, 5)} {pool?.currencyToken.symbol}
-        </p>
+        <div className="flex gap-2 items-end">
+          <p className="text-sm text-gray-900 font-medium">
+            {mlctTokenData
+              ? parseFloat(mlctTokenData?.formatted).toFixed(2)
+              : 0}
+          </p>
+          <p className="text-xs text-gray-500 font-normal">
+            {mlctTokenData?.symbol}
+          </p>
+        </div>
       </div>
 
       {/* TRANSACTION FORM */}
@@ -245,7 +237,7 @@ export const DepositForm: FC<Props> = ({
             onChange={handleInputChange}
             type="number"
             step="0.01"
-            disabled={isBalanceLoading || accountStatus !== "connected"}
+            disabled={isBalanceLoading || !address}
           />
 
           <div className="absolute right-4 text-xs text-gray-500 font-medium">
@@ -253,26 +245,26 @@ export const DepositForm: FC<Props> = ({
           </div>
 
           {/* CURRENT WALLET BALANCE AND MAX BUTTON */}
-          {accountStatus === "connected" && !isBalanceLoading && (
+          {!!address && !isBalanceLoading && (
             <div className="absolute -bottom-6 right-2 text-xs text-indigo-500 font-medium hover:text-indigo-600">
               {shownTransactionUi === "DEPOSIT" && (
-                <span className="text-xs text-gray-500 font-normal mr-4">
-                  BALANCE: {maxDepositAmount}
-                </span>
-              )}
-              <button
-                onClick={() => {
-                  shownTransactionUi === "DEPOSIT"
-                    ? setInputAmount(maxDepositAmount)
-                    : setInputAmount(
-                        parseFloat(formatEther(shares || BigInt(0)))
+                <>
+                  <span className="text-xs text-gray-500 font-normal mr-4">
+                    BALANCE: {maxDepositAmount.toFixed(2)}
+                  </span>
+                  <button
+                    onClick={() => {
+                      setInputAmount(
+                        maxDepositAmount < 0.001 ? 0 : maxDepositAmount
                       );
-                }}
-                className="text-xs text-indigo-500 font-medium hover:text-indigo-600"
-                type="button"
-              >
-                MAX
-              </button>
+                    }}
+                    className="text-xs text-indigo-500 font-medium hover:text-indigo-600"
+                    type="button"
+                  >
+                    MAX
+                  </button>
+                </>
+              )}
             </div>
           )}
         </div>
@@ -293,7 +285,7 @@ export const DepositForm: FC<Props> = ({
               className="bg-indigo-500 text-white p-2 rounded-md w-full hover:bg-indigo-600 
                             disabled:bg-gray-300 disabled:cursor-not-allowed"
               disabled={
-                isLoading || inputAmount === 0 || accountStatus !== "connected"
+                isLoading || inputAmount === 0 || !address || !inputAmount
               }
             >
               {isAllowed ? "Deposit" : "Approve"}
@@ -307,8 +299,9 @@ export const DepositForm: FC<Props> = ({
               disabled={
                 isLoading ||
                 depositSum === BigInt(0) ||
-                accountStatus !== "connected" ||
-                inputAmount === 0
+                !address ||
+                inputAmount === 0 ||
+                !inputAmount
               }
             >
               Redeem

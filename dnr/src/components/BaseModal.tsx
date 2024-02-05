@@ -1,12 +1,15 @@
 import Link from "next/link";
 import { FC } from "react";
 
-type Props = {
+interface BaseModalProps {
   children: React.ReactNode | React.ReactNode[];
   onCloseRedirectTo: string;
-};
+}
 
-export const BaseModal: FC<Props> = ({ children, onCloseRedirectTo }) => {
+export const BaseModal: FC<BaseModalProps> = ({
+  children,
+  onCloseRedirectTo,
+}) => {
   return (
     <div
       className="fixed z-10 inset-0 overflow-y-auto"
