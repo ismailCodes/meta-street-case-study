@@ -7,3 +7,7 @@
     npm run dev
 
 > `env.local` pushed to upstream for an easier project setup
+
+
+Demo:
+https://meta-street-case-study-i.vercel.app/pools
