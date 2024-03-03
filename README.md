@@ -1,4 +1,4 @@
-# MetaStreet case study project
+# Interacting with Metastreet yield infrastructure protocol
 
 ## Install and run
 
