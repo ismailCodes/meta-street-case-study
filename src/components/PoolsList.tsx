@@ -9,6 +9,15 @@ interface PoolsListProps {
   pools: Pool[];
 }
 
+const generateCardAnimationVariants = (index: number) => ({
+  hidden: { opacity: 0, x: -10 },
+  show: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.5, delay: index * 0.1 },
+  },
+});
+
 export const PoolsList: FC<PoolsListProps> = ({ pools }) => {
   const LinkWithMotion = motion(Link);
 
@@ -23,14 +32,7 @@ export const PoolsList: FC<PoolsListProps> = ({ pools }) => {
           <LinkWithMotion
             key={pool.id}
             href={`/pools/${pool.id}`}
-            variants={{
-              hidden: { opacity: 0, x: -10 },
-              show: {
-                opacity: 1,
-                y: 0,
-                transition: { duration: 0.5, delay: index * 0.1 },
-              },
-            }}
+            variants={generateCardAnimationVariants(index)}
             initial="hidden"
             animate="show"
           >
