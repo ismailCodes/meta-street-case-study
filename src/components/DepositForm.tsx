@@ -228,8 +228,8 @@ export const DepositForm: FC<DepositFormProps> = ({
             className="w-full p-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 focus:outline-none 
                 [-moz-appearance:_textfield] [&::-webkit-outer-spin-button]:m-0 
                 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 
-                [&::-webkit-inner-spin-button]:appearance-none pr-10"
-            placeholder="Amount"
+                [&::-webkit-inner-spin-button]:appearance-none pr-10 border border-indigo-500"
+            placeholder="e.g 1.234"
             name="depositAmount"
             value={
               inputAmount === null ? "" : inputAmount === 0 ? 0 : inputAmount

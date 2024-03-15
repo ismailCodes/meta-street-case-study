@@ -47,15 +47,15 @@ export const TicksByPool: FC<TicksByPoolProps> = async ({ poolId }) => {
 
   return (
     <div className="flex flex-col w-full max-w-5xl overflow-hidden p-3">
-      <div className="flex items-center w-full mb-4 gap-2 ">
+      <div className="flex items-center w-full mb-4 gap-2">
         {/* COLLECTION INFORMATION */}
-        <Image
-          src={collectionData?.image || ""}
-          alt="Reservoir Collection"
-          width={40}
-          height={40}
-          className="rounded-full"
-        />
+        <div className="relative w-14 h-14 rounded-full overflow-hidden border border-indigo-100">
+          <Image
+            src={collectionData?.image || ""}
+            alt="Reservoir Collection"
+            fill
+          />
+        </div>
         <h1 className="text-2xl font-semibold text-gray-100 tracking-widest">
           Ticks{" |  "}
           {data?.pool?.collateralToken.name}

@@ -27,7 +27,11 @@ export const TickCard = ({
 }) => {
   return (
     <Link href={`/pools/${poolId}?tickId=${tickId}`} prefetch>
-      <div className="flex flex-col w-full bg-gray-200 rounded-lg overflow-hidden cursor-pointer hover:bg-indigo-50 hover:shadow-indigo-100/50 hover:shadow-md">
+      <div
+        className="flex flex-col w-full bg-indigo-400/10 rounded-xl overflow-hidden cursor-pointer
+        hover:shadow-indigo-300 transition
+          border-b-2 border-r-2 duration-200 hover:border-indigo-400/50 border-transparent"
+      >
         <div className="flex justify-center items-center w-full min-h-12 bg-indigo-700 font-semibold text-sm text-center p-2">
           {tokenName.replace("MetaStreet V2 Deposit: ", "")}
         </div>
@@ -42,7 +46,7 @@ export const TickCard = ({
                   ).slice(0, 5)}
                   %
                 </p>
-                <p className="text-[9px] text-gray-500 font-light">
+                <p className="text-[9px] text-gray-300 font-light">
                   Current APR
                 </p>
               </div>
@@ -59,16 +63,16 @@ export const TickCard = ({
 
           {/* Loan limit */}
           <div className="flex w-full justify-between">
-            <p className="text-xs text-gray-500 font-normal">LOAN LIMITS</p>
-            <p className="text-sm text-gray-700 font-semibold">
+            <p className="text-xs text-gray-300 font-normal">LOAN LIMITS</p>
+            <p className="text-sm text-gray-200 font-semibold">
               {weiToWeth(limit)} {poolCurrencySymbol}
             </p>
           </div>
 
           {/* Loan limit */}
           <div className="flex w-full justify-between">
-            <p className="text-xs text-gray-500 font-normal">TOTAL DEPOSITS</p>
-            <p className="text-sm text-gray-700 font-semibold">
+            <p className="text-xs text-gray-300 font-normal">TOTAL DEPOSITS</p>
+            <p className="text-sm text-gray-200 font-semibold">
               {totalDeposits.slice(0, 5)} {poolCurrencySymbol}
             </p>
           </div>
