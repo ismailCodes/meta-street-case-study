@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache, HttpLink, from } from "@apollo/client";
 
 const httpLink = new HttpLink({
-  uri: "../public/schema.graphql",
+  uri: "https://api.studio.thegraph.com/query/31830/metastreet-v2-sepolia/version/latest",
 });
 
 const cache = new InMemoryCache();
