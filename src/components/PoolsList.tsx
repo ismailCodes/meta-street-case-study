@@ -1,12 +1,12 @@
 "use client";
-import { Pool } from "@/gql/graphql";
 import { calculatePercentageBigInt, weiToWeth } from "@root/utils/conversion";
 import Link from "next/link";
 import { FC } from "react";
 import { motion } from "framer-motion";
+import { GetAllPoolsQuery, Pool } from "@/gql/graphql";
 
 interface PoolsListProps {
-  pools: Pool[];
+  pools: GetAllPoolsQuery["pools"];
 }
 
 const generateCardAnimationVariants = (index: number) => ({
@@ -24,6 +24,7 @@ export const PoolsList: FC<PoolsListProps> = ({ pools }) => {
   return (
     <motion.div className=" grid md:grid-cols-3 gap-4 max-w-5xl w-full">
       {pools?.map((pool, index) => {
+        if (!pool) return null;
         const poolUsagePercentage = calculatePercentageBigInt(
           BigInt(pool.totalValueUsed),
           BigInt(pool.totalValueLocked)

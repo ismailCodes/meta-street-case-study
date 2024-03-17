@@ -1,9 +1,13 @@
-import { GetTicksByPoolDocument } from "@/gql/graphql";
 import { weiToWeth } from "@root/utils/conversion";
-import { getClient } from "@root/utils/serverSideGqlClient";
 import Image from "next/image";
 import { FC } from "react";
 import { TickCard } from "./TickCard";
+import { GetTicksByPoolQuery } from "@root/graphql/getTicksByPool";
+import { apolloClient } from "@root/utils/gql-client";
+import {
+  GetTicksByPoolQuery as GetTicksByPoolQueryType,
+  GetTicksByPoolQueryVariables,
+} from "@/gql/graphql";
 
 interface ReservoirCollection {
   collections: Array<{ image: string }>;
@@ -14,8 +18,14 @@ interface TicksByPoolProps {
 }
 
 export const TicksByPool: FC<TicksByPoolProps> = async ({ poolId }) => {
-  const { data } = await getClient().query(GetTicksByPoolDocument, {
-    poolId,
+  const { data } = await apolloClient.query<
+    GetTicksByPoolQueryType,
+    GetTicksByPoolQueryVariables
+  >({
+    query: GetTicksByPoolQuery,
+    variables: {
+      poolId,
+    },
   });
 
   const collectionData = await fetch(

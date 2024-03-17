@@ -1,4 +1,4 @@
-import { GetTickDataDocument, GetTickDataQuery } from "@/gql/graphql";
+import { GetTickDataQuery } from "@root/graphql/getTickByIdAndPoolId";
 import {
   convertInterestRate,
   secondsToDays,
@@ -6,11 +6,15 @@ import {
   sumShares,
   weiToWeth,
 } from "@root/utils/conversion";
-import { getClient } from "@root/utils/serverSideGqlClient";
+import { apolloClient } from "@root/utils/gql-client";
 import { FC } from "react";
 import { Address, formatEther } from "viem";
 import { BaseModal } from "./BaseModal";
 import { DepositForm } from "./DepositForm";
+import {
+  GetTickDataQuery as GetTickDataQueryType,
+  GetTickDataQueryVariables,
+} from "@/gql/graphql";
 
 interface TickModalProps {
   poolId: string;
@@ -18,18 +22,16 @@ interface TickModalProps {
 }
 
 export const TickModal: FC<TickModalProps> = async ({ poolId, tickId }) => {
-  const { data } = await getClient().query(
-    GetTickDataDocument,
-    {
+  const { data } = await apolloClient.query<
+    GetTickDataQueryType,
+    GetTickDataQueryVariables
+  >({
+    query: GetTickDataQuery,
+    variables: {
       poolId,
       tickId,
     },
-    {
-      fetchOptions: {
-        cache: "no-cache",
-      },
-    }
-  );
+  });
 
   const depositSum = sumDepositedAmounts(
     data?.pool?.deposits.filter((deposit) => deposit.tick.id === tickId) || []
@@ -95,7 +97,7 @@ export const TickModal: FC<TickModalProps> = async ({ poolId, tickId }) => {
             poolId={poolId as Address}
             depositSum={depositSum}
             shares={sharesSum}
-            pool={data?.pool as GetTickDataQuery["pool"]}
+            pool={data?.pool}
             tickId={tickId as Address}
           />
         </div>

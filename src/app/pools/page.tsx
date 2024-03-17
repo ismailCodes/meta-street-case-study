@@ -1,9 +1,12 @@
 import { PoolsList } from "@/components/PoolsList";
-import { GetAllPoolsDocument } from "@/gql/graphql";
-import { getClient } from "@root/utils/serverSideGqlClient";
+import { GetAllPoolsQuery } from "@root/graphql/getAllPools";
+import { GetAllPoolsQuery as GetAllPoolsQueryType } from "@/gql/graphql";
+import { apolloClient } from "@root/utils/gql-client";
 
 export default async function Pools() {
-  const { data } = await getClient().query(GetAllPoolsDocument, {});
+  const { data } = await apolloClient.query<GetAllPoolsQueryType>({
+    query: GetAllPoolsQuery,
+  });
 
   return (
     <div className="flex flex-col w-full max-w-5xl overflow-hidden p-3">

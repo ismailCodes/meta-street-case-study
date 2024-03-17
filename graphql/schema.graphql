@@ -1,0 +1,348 @@
+################################################################################
+# Pool Entity
+################################################################################
+
+type Pool @entity {
+  id: Bytes! # address
+  # Properties
+  implementationVersionMajor: String!
+  implementation: Bytes! # address
+  collateralToken: CollateralToken!
+  currencyToken: CurrencyToken!
+  collateralWrappers: [Bytes!]! # address[]
+  durations: [BigInt!]! # uint64[] (in seconds)
+  rates: [BigInt!]! # uint64[]
+  adminFeeRate: BigInt! # uint64
+  collateralLiquidator: Bytes! # address
+  delegationRegistry: Bytes! # address
+  # Collateral Filter
+  tokenIdRange: [BigInt!]
+  tokenIdSet: [BigInt!]
+  tokenIdMerkleRoot: Bytes
+  tokenIdMerkleMetadataURI: String
+  # Derived Properties
+  maxBorrows: [BigInt!]! # uint256[]
+  # State
+  adminFeeBalance: BigInt! # uint256
+  ticks(where: TickFilter): [Tick!]! @derivedFrom(field: "pool")
+  deposits: [Deposit!]! @derivedFrom(field: "pool")
+  loans: [Loan!]! @derivedFrom(field: "pool")
+  events: [PoolEvent!]! @derivedFrom(field: "pool")
+
+  # Statistics
+  totalValueLocked: BigInt! # uint256
+  totalValueAvailable: BigInt! # uint256
+  totalValueUsed: BigInt! # uint256
+  loansOriginated: BigInt!
+  loansActive: BigInt!
+  loansRepaid: BigInt!
+  loansLiquidated: BigInt!
+  loansCollateralLiquidated: BigInt!
+
+  # Historical Statistics
+  dayData: [PoolDayData!]! @derivedFrom(field: "pool")
+}
+
+type PoolDayData @entity(immutable: true) {
+  id: Bytes!
+  timestamp: BigInt!
+  pool: Pool!
+  totalValueLocked: BigInt!
+  totalValueAvailable: BigInt!
+  totalValueUsed: BigInt!
+}
+
+################################################################################
+# CollateralToken Entity
+################################################################################
+
+type CollateralToken @entity {
+  id: Bytes! # address
+  name: String!
+  pools: [Pool!]! @derivedFrom(field: "collateralToken")
+}
+
+################################################################################
+# CurrencyToken Entity
+################################################################################
+
+type CurrencyToken @entity {
+  id: Bytes!
+  name: String!
+  symbol: String!
+  pools: [Pool!]! @derivedFrom(field: "currencyToken")
+}
+
+################################################################################
+# Tick Entity
+################################################################################
+
+type Tick @entity {
+  id: Bytes! # <pool><encoded-tick>
+  pool: Pool!
+  # encoded tick
+  raw: BigInt!
+  # decoded tick
+  limit: BigInt! # uint128
+  duration: BigInt! # uint64
+  rate: BigInt! # uint64
+  durationIndex: Int! # uint3
+  rateIndex: Int! # uint3
+  # node info
+  active: Boolean!
+  value: BigInt! # uint128
+  shares: BigInt! # uint128
+  available: BigInt! # uint128
+  pending: BigInt! # uint128
+  redemptionPending: BigInt! # uint128
+  prev: BigInt! # uint128
+  next: BigInt! # uint128
+  # accrual info
+  accrued: BigInt # uint128
+  accrualRate: BigInt # uint64
+  accrualTimestamp: BigInt # uint64
+  # for calculating apr and net earnings
+  principalWeightedDuration: BigInt! # uint128
+  interestWeightedMaturity: BigInt! # uint128
+  # token instance, null if tick is not tokenized
+  token: CurrencyToken
+}
+
+################################################################################
+# Deposit Entity
+################################################################################
+
+type Deposit @entity {
+  id: Bytes! # <pool><account><tick>
+  pool: Pool!
+  tick: Tick!
+  account: Bytes! # address
+  shares: BigInt! # uint128
+  depositedAmount: BigInt! # increases on Deposited events and decreases on Withdrawn ones
+  updatedAt: BigInt! # uint64 (seconds since epoch)
+  createdAt: BigInt! # uint64 (seconds since epoch)
+  redemptions: [Redemption!]! @derivedFrom(field: "deposit")
+}
+
+type Redemption @entity {
+  id: Bytes! # <deposit it><redemption id>
+  redemptionId: BigInt! # uint128
+  deposit: Deposit!
+  shares: BigInt! # uint256
+}
+
+################################################################################
+# Bundle Entity (for BundleCollateralWrapper)
+################################################################################
+
+type Bundle @entity {
+  id: ID! # bundle token id
+  owner: Bytes! # address
+  collateralWrapperContext: Bytes!
+  underlyingCollateralTokenAddress: Bytes!
+  underlyingCollateralTokenIds: [BigInt!]! # uint256[]
+}
+
+################################################################################
+# Batch Entity (for ERC1155CollateralWrapper)
+################################################################################
+
+type Batch @entity {
+  id: ID! # Batch token id
+  owner: Bytes! # address
+  collateralWrapperContext: Bytes!
+  underlyingCollateralTokenAddress: Bytes!
+  underlyingCollateralTokenIds: [BigInt!]! # uint256[]
+}
+
+################################################################################
+# Loan Entity
+################################################################################
+
+enum LoanStatus {
+  Active
+  Liquidated
+  Repaid
+  CollateralLiquidated
+}
+
+type Loan @entity {
+  id: Bytes! # loan receipt hash
+  pool: Pool!
+  status: LoanStatus!
+  transactionHash: Bytes!
+  timestamp: BigInt! # uint64 (in seconds since epoch)
+  completion: BigInt # uint64 (in seconds since epoch)
+  bundle: Bundle # set only if this is a bundle loan
+  batch: Batch # set only if this is a batch loan
+  delegate: Bytes # address
+  # Decoded Loan Receipt
+  borrower: Bytes! # address
+  maturity: BigInt! # uint64 (in seconds since epoch)
+  duration: BigInt! # uint64 (in seconds)
+  collateralToken: CollateralToken! # (Underlying collateral token)
+  collateralTokenIds: [BigInt!]! # uint256[] (Underlying collateral token IDs)
+  collateralWrapperToken: Bytes # address (Collateral wrapper token, if wrapped)
+  collateralWrapperTokenId: BigInt # uint256 (Collateral wrapper token ID, if wrapped)
+  ticks: [BigInt!]! # uint128[]
+  useds: [BigInt!]! # uint128[]
+  interests: [BigInt!]! # uint128[]
+  principal: BigInt! # uint256
+  repayment: BigInt! # uint256
+  proceeds: BigInt # uint256, if collateral is liquidated
+  collateralWrapperContext: Bytes!
+  # Raw Loan Receipt
+  loanReceipt: Bytes!
+}
+
+################################################################################
+# Pool Events
+################################################################################
+
+type PoolEvent @entity(immutable: true) {
+  id: Bytes! # <pool><tx hash>
+  transactionHash: Bytes!
+  timestamp: BigInt! # uint64
+  from: Bytes! # address
+  account: Bytes! # address
+  type: PoolEventType!
+  pool: Pool!
+  deposit: Deposit # set only if type == Deposited
+  loanOriginated: LoanOriginated
+  loanRepaid: LoanRepaid
+  loanLiquidated: LoanLiquidated
+  collateralLiquidated: CollateralLiquidated
+  deposited: Deposited
+  redeemed: Redeemed
+  withdrawn: Withdrawn
+  tokenCreated: TokenCreated
+  transferred: Transferred
+}
+
+enum PoolEventType {
+  LoanOriginated
+  LoanRepaid
+  LoanLiquidated
+  CollateralLiquidated
+  Deposited
+  Redeemed
+  Withdrawn
+  TokenCreated
+  Transferred
+}
+
+type LoanOriginated @entity(immutable: true) {
+  id: Bytes! # <pool><tx hash>
+  loan: Loan!
+}
+
+type LoanRepaid @entity(immutable: true) {
+  id: Bytes! # <pool><tx hash>
+  loan: Loan!
+}
+
+type LoanLiquidated @entity(immutable: true) {
+  id: Bytes! # <pool><tx hash>
+  loan: Loan!
+}
+
+type CollateralLiquidated @entity(immutable: true) {
+  id: Bytes! # <pool><tx hash>
+  loan: Loan!
+  proceeds: BigInt!
+}
+
+type Deposited @entity(immutable: true) {
+  id: Bytes! # <pool><tx hash>
+  account: Bytes! # address
+  tick: Tick!
+  amount: BigInt! # uint256
+  shares: BigInt! # uint256
+}
+
+type Redeemed @entity(immutable: true) {
+  id: Bytes! # <pool><tx hash>
+  account: Bytes! # address
+  tick: Tick!
+  shares: BigInt! # uint256
+  estimatedAmount: BigInt! # uint256
+}
+
+type Withdrawn @entity(immutable: true) {
+  id: Bytes! # <pool><tx hash>
+  account: Bytes! # address
+  tick: Tick!
+  shares: BigInt! # uint256
+  amount: BigInt! # uint256
+}
+
+type TokenCreated @entity(immutable: true) {
+  id: Bytes! # <pool><tx hash>
+  tick: Tick!
+  token: CurrencyToken!
+}
+
+type Transferred @entity(immutable: true) {
+  id: Bytes! # <pool><tx hash>
+  tick: Tick!
+  token: CurrencyToken!
+  shares: BigInt! # uint256
+  estimatedAmount: BigInt! # uint256
+  from: Bytes! # address
+  to: Bytes! # address
+}
+
+################################################################################
+# Auction Entities
+################################################################################
+type Liquidation @entity(immutable: true) {
+  id: Bytes! # liquidation hash
+  source: Bytes! # address
+  sourceImplementation: Bytes! # address
+  collateralToken: CollateralToken!
+  currencyToken: CurrencyToken!
+  loan: Loan!
+  auctions: [Auction!]! @derivedFrom(field: "liquidation")
+}
+
+enum AuctionStatus {
+  Created
+  Started
+  Ended
+}
+
+type Auction @entity {
+  id: Bytes!
+  liquidation: Liquidation!
+  collateralToken: CollateralToken
+  currencyToken: CurrencyToken!
+  collateralTokenId: BigInt! # uint256
+  quantity: BigInt!
+  highestBid: Bid
+  bidsCount: Int!
+  endTime: BigInt! # uint64
+  bids: [Bid!]! @derivedFrom(field: "auction")
+  status: AuctionStatus
+}
+
+type Bid @entity {
+  id: Bytes!
+  auction: Auction!
+  bidder: Bytes!
+  amount: BigInt! # uint256
+  isHighest: Boolean!
+  timestamp: BigInt! # uint64
+  transactionHash: Bytes!
+}
+
+type Query {
+  pools: [Pool]
+  pool(id: ID!): Pool
+}
+
+input TickFilter {
+  id: Bytes
+}
+
+scalar BigInt
+scalar Bytes
